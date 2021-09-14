@@ -1,0 +1,20 @@
+{
+  "name": "notification-service",
+  "version": "1.0.0",
+  "description": "Notification service",
+  "author": "Prafful Agrawal <prafful026@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.2.2",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "serverless-bundle": "^5.0.1",
+    "serverless-pseudo-parameters": "^2.5.0",
+    "webpack": "^5.52.1"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.988.0"
+  }
+}
