@@ -8,7 +8,6 @@ provider:
   name: aws
   runtime: nodejs12.x
   environment:
-    AWS_REGION_VAR: ${self:provider.region}
     MAIL_USERNAME: ${file(credentials/mail.txt)}
     MAIL_PASSWORD: ${file(credentials/password.txt)}
     OAUTH_CLIENTID: ${file(credentials/clientid.txt)}
@@ -20,10 +19,12 @@ provider:
   iamRoleStatements:
     - ${file(iam/MailQueueIAM.yml):MailQueueIAM}
 
-
 resources:
   Resources:
     MailQueue: ${file(resources/MailQueue.yml):MailQueue}
+  Outputs:
+    MailQueueArn: ${file(resources/MailQueue.yml):Outputs.MailQueueArn}
+    MailQueueUrl: ${file(resources/MailQueue.yml):Outputs.MailQueueUrl}
 
 functions:
   sendMail:
@@ -37,3 +38,4 @@ custom:
   mailQueue:
     name: MailQueue-${self:provider.stage}
     arn: !GetAtt MailQueue.Arn
+    url: !Ref MailQueue
