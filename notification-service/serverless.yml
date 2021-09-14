@@ -9,11 +9,14 @@ provider:
   runtime: nodejs12.x
   environment:
     AWS_REGION_VAR: ${self:provider.region}
+    MAIL_USERNAME: ${file(credentials/mail.txt)}
+    MAIL_PASSWORD: ${file(credentials/password.txt)}
+    OAUTH_CLIENTID: ${file(credentials/clientid.txt)}
+    OAUTH_CLIENT_SECRET: ${file(credentials/clientsecret.txt)}
+    OAUTH_REFRESH_TOKEN: ${file(credentials/refresh.txt)}
   memorySize: 256
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
-  iamRoleStatements:
-    - ${file(iam/SendMailIAM.yml):SendMailIAM}
 
 functions:
   sendMail:
