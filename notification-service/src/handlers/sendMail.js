@@ -11,11 +11,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 async function sendMail(event, context) {
+  const record = event.Records[0];
+  const email = JSON.parse(record.body);
+  const { subject, body, recipient } = email;
+
   const mailOptions = {
     from: process.env.MAIL_USERNAME,
-    to: "prafful0026@gmail.com",
-    subject: "Nodemailer Project",
-    text: "Hi from your nodemailer project",
+    to: recipient,
+    subject: subject,
+    text: body,
   };
   try {
     const result = await transporter.sendMail(mailOptions);
