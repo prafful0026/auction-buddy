@@ -15,7 +15,7 @@ provider:
     OAUTH_REFRESH_TOKEN: ${file(credentials/refresh.txt)}
   memorySize: 256
   region: eu-west-1
-  stage: ${opt:stage, 'dev'}
+  stage: ${opt:stage, 'test'}
   iamRoleStatements:
     - ${file(iam/MailQueueIAM.yml):MailQueueIAM}
 

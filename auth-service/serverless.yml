@@ -7,8 +7,8 @@ provider:
   name: aws
   runtime: nodejs12.x
   memorySize: 128
-  stage: ${opt:stage, 'dev'}
   region: eu-west-1
+  stage: ${opt:stage, 'test'}
   environment:
     AUTH0_PUBLIC_KEY: ${file(secret.pem)}
 
