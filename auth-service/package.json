@@ -5,6 +5,9 @@
   "description": "Demonstration of protecting API gateway endpoints with auth0",
   "license": "MIT",
   "dependencies": {
+    "@middy/core": "^2.5.1",
+    "@middy/http-cors": "^2.5.1",
+    "http-errors": "^1.8.0",
     "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {

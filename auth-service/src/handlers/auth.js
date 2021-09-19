@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
-
+import middy from "@middy/core";
+import cors from "@middy/http-cors";
+import createError from "http-errors";
 const generatePolicy = (principalId, methodArn) => {
   const apiGatewayWildcard = methodArn.split("/", 2).join("/") + "/*";
 
@@ -18,9 +20,9 @@ const generatePolicy = (principalId, methodArn) => {
   };
 };
 
-export async function handler(event, context) {
+async function auth(event, context) {
   if (!event.authorizationToken) {
-    throw "Unauthorized";
+    throw new createError.Unauthorized("Unauthorized");
   }
 
   const token = event.authorizationToken.replace("Bearer ", "");
@@ -35,6 +37,8 @@ export async function handler(event, context) {
     };
   } catch (error) {
     console.log(error);
-    throw "Unauthorized";
+    throw new createError.Unauthorized("Unauthorized");
   }
 }
+
+export const handler = middy(auth).use(cors());
