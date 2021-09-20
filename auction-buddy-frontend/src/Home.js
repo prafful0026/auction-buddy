@@ -1,20 +1,19 @@
-import React, { useEffect, Suspense } from "react";
-// import { useAuth0, logout } from "@a";
+import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { authAtom } from "./RecoilStore/AuthStore";
-import { useRecoilState} from "recoil";
-import Auctions from "./components/Auctions";
+import Auctions from "./pages/Auctions";
+import { ErrorBoundary } from "react-error-boundary";
+
+function ErrorFallback({ error, resetErrorBoundary }) {
+  return (
+    <div role='alert'>
+      <p>Something went wrong:</p>
+      <pre>{error.message}</pre>
+      <button onClick={resetErrorBoundary}>Try again</button>
+    </div>
+  );
+}
 const Home = () => {
-  const { logout, user, getAccessTokenSilently } = useAuth0();
-  // const [auth, setAuth] = useRecoilState(authAtom);
-  console.log("in home");
-  // useEffect(async () => {
-  //   if (!auth.user || !auth.token) {
-  //     const obj = await getAccessTokenSilently();
-  //     // console.log(obj);
-  //     setAuth((state) => ({ ...state, obj }));
-  //   }
-  // }, []);
+  const { logout, user } = useAuth0();
   return (
     <div>
       <div>
@@ -24,10 +23,9 @@ const Home = () => {
         </button>
       </div>
       hi hello
-      {/* <ErrorBoundary> */}
-      {/* <Suspense fallback={<>yyoidcq  e uioqw </>}> */}
-      <Auctions />
-      {/* </Suspense> */}
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
+        <Auctions />
+      </ErrorBoundary>
     </div>
   );
 };

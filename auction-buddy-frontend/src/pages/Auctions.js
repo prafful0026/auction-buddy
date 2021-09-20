@@ -9,7 +9,7 @@ const Auctions = () => {
       <button onClick={() => setDemp((state) => state + 1)}>dwd</button>
       {demo}
       {auctions.state === "hasValue" &&
-        auctions.contents.map((auction) => <>{auction.title}</>)}
+        auctions.contents.map((auction,i) => <div key={i}>{auction.title}</div>)}
       {auctions.state === "loading" && <>loading</>}
       {auctions.state === "hasError" && <>{auctions.contents}</>}
     </div>

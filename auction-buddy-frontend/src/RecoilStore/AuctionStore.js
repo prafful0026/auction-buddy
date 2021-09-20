@@ -1,8 +1,9 @@
 import { selectorFamily } from "recoil";
 import { authAtom } from "./AuthStore";
+import { API_BASE_URL } from "../utils/constants";
 import Axios from "axios";
 const axios = Axios.create({
-  baseURL: "https://qwveq8ogu8.execute-api.eu-west-1.amazonaws.com/dev",
+  baseURL: API_BASE_URL,
 });
 export const auctionSelector = selectorFamily({
   key: "auctionState",
@@ -14,7 +15,7 @@ export const auctionSelector = selectorFamily({
         try {
           const auctions = await axios.get("/auction?status=OPEN", {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${token}`
             },
           });
           console.log(auctions.data);
