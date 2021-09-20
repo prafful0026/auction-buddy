@@ -5,6 +5,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { authAtom } from "./RecoilStore/AuthStore";
 import { useSetRecoilState } from "recoil";
 import PrivateRoute from "./components/PrivateRoute";
+import NavBar from "./components/NavBar";
 import Yo from "./Yo";
 
 const App = () => {
@@ -21,10 +22,15 @@ const App = () => {
     isAuthenticated && getToken();
   }, [isAuthenticated]);
   return (
-    <Switch>
-      <PrivateRoute path='/' component={Yo} exact />
-      <PrivateRoute path='/profile' component={Profile} exact />
-    </Switch>
+    <div className='App'>
+      <header>
+        <NavBar />
+      </header>
+      <Switch>
+        <PrivateRoute path='/' component={Profile} exact />
+        {/* <PrivateRoute path='/profile' component={Profile} exact /> */}
+      </Switch>
+    </div>
   );
 };
 export default App;
