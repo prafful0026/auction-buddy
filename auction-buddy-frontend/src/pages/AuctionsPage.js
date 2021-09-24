@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Auction from "../components/Auction";
-// import BidModal from "../components/BidModal";
+import BidModal from "../components/BidModal";
+import {
+  auctionsAtom,
+  biddingOnAuctionAtom,
+  auctionsFetchSelector,
+} from "../RecoilStore/AuctionStore";
 import { Fab, makeStyles } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import { useRecoilValueLoadable } from "recoil";
-import { auctionSelector } from "../RecoilStore/AuctionStore";
+import {
+  useRecoilState,
+  useRecoilValueLoadable,
+} from "recoil";
 import { useHistory } from "react-router";
 import { useAuth0 } from "@auth0/auth0-react";
+import HandleLoadableObject from "../components/HandleLoadableObject";
 const containerWidth = 1000;
 const cardPadding = 14;
 const cardWidth = containerWidth / 2 - cardPadding * 2;
@@ -38,14 +46,15 @@ const useStyles = makeStyles({
   },
 });
 
-const AuctionsPage = (props) => {
+const AuctionsPage = () => {
   const [demo, setDemp] = useState(0);
-  const auctions = useRecoilValueLoadable(auctionSelector(demo));
+  const fetchAuctions = useRecoilValueLoadable(auctionsFetchSelector(demo));
+  const [auctions, setAuctions] = useRecoilState(auctionsAtom);
   const { user } = useAuth0();
   const email = user.name;
   const classes = useStyles();
   const history = useHistory();
-
+  const [biddingOnAuction,setBiddingOnAuction] = useRecoilState(biddingOnAuctionAtom);
   // useEffect(() => {
   //   (async () => {
   //     await auctionStore.fetchAuctions();
@@ -56,6 +65,10 @@ const AuctionsPage = (props) => {
   //     }, process.env.REACT_APP_REFRESH_RATE * 1000);
   //   })();
   // }, [auctionStore, routerHistory]);
+
+  // useEffect(()=>{
+
+  // })
   const geeBidState = (auction) => {
     let bidState = "CAN_BID";
 
@@ -69,39 +82,40 @@ const AuctionsPage = (props) => {
 
     return bidState;
   };
+
   const RenderAuctions = () => {
     return (
       <>
-        {auctions.state === "hasValue" &&
-          (auctions?.contents?.length > 0 ? (
-            auctions?.contents?.map((auction) => {
-              const bidState = geeBidState(auction);
-              return (
-                <div key={auction.id} className={classes.auctionCard}>
-                  <Auction
-                    auction={auction}
-                    bidState={bidState}
-                    // onBid={() => auctionStore.setBiddingOn(auction)}
-                    onBid={() => console.log("bid!!!")}
-                  />
-                </div>
-              );
-            })
-          ) : (
-            <div style={{ textAlign: "center", width: "100%" }}>
-              <h4>No auctions available. Create one?</h4>
-            </div>
-          ))}
-        {auctions.state === "loading" && <>loading</>}
-        {auctions.state === "hasError" && <>{auctions.contents}</>}
+        {auctions.length > 0 ? (
+          auctions.map((auction) => {
+            const bidState = geeBidState(auction);
+            return (
+              <div key={auction.id} className={classes.auctionCard}>
+                <Auction
+                  auction={auction}
+                  bidState={bidState}
+                  onBid={() => setBiddingOnAuction(auction)}
+                />
+              </div>
+            );
+          })
+        ) : (
+          <div style={{ textAlign: "center", width: "100%" }}>
+            <h4>No fetchAuctions available. Create one?</h4>
+          </div>
+        )}
       </>
     );
   };
 
   return (
     <div className={classes.auctionsContainer}>
-      {/* <BidModal /> */}
-      <RenderAuctions />
+      {biddingOnAuction && <BidModal />}
+      <HandleLoadableObject
+        loadableObject={fetchAuctions}
+        updatingFunction={setAuctions}
+      />
+      {fetchAuctions.state === "hasValue" && <RenderAuctions />}
       <div>
         <button onClick={() => setDemp((state) => state + 1)}>dwd</button>
       </div>
