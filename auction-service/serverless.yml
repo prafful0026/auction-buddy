@@ -82,6 +82,7 @@ functions:
     events:
       - http:
           method: PATCH
+          cors: true
           path: /auction/{id}/picture
           authorizer: ${self:custom.authorizer}
 custom:
