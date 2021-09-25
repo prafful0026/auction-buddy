@@ -3,13 +3,12 @@ import Auction from "../components/Auction";
 import BidModal from "../components/BidModal";
 import {
   auctionsAtom,
-  fetchAuctionsErrorAtom,
-  fetchAuctionsLoadingAtom,
   biddingOnAuctionAtom,
+  fetchAuctionsSelector,
 } from "../RecoilStore/AuctionStore";
 import { Fab, makeStyles } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValueLoadable, useRecoilValue } from "recoil";
 import { useHistory } from "react-router";
 import { useAuth0 } from "@auth0/auth0-react";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -47,8 +46,7 @@ const useStyles = makeStyles({
 
 const AuctionsPage = () => {
   const auctions = useRecoilValue(auctionsAtom);
-  const loading = useRecoilValue(fetchAuctionsLoadingAtom);
-  const error = useRecoilValue(fetchAuctionsErrorAtom);
+  const fetchAuctions = useRecoilValueLoadable(fetchAuctionsSelector(1));
   const { user } = useAuth0();
   const email = user.name;
   const classes = useStyles();
@@ -98,8 +96,11 @@ const AuctionsPage = () => {
 
   return (
     <>
-      <LoadingSpinner display={loading} />
-      <Error isError={error} errorMessage={error} />
+      <LoadingSpinner display={fetchAuctions.state === "loading"} />
+      <Error
+        isError={fetchAuctions.state === "hasError"}
+        errorMessage={fetchAuctions.contents}
+      />
       <div className={classes.auctionsContainer}>
         {biddingOnAuction && <BidModal />}
         <RenderAuctions />

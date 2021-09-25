@@ -10,15 +10,27 @@ export const auctionsAtom = atom({
   key: "auctionsState",
   default: [],
 });
-export const fetchAuctionsLoadingAtom = atom({
-  key: "fetchAuctionsLoadingState",
-  default: false,
+export const fetchAuctionsSelector = selectorFamily({
+  key: "fetchAuctionsState",
+  get:
+    (trigger) =>
+    async ({ get }) => {
+      const token = get(authAtom);
+      if (token) {
+        try {
+          const newAuctions = await axios.get("/auction?status=OPEN", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          return newAuctions.data;
+        } catch (error) {
+          console.log(error);
+          throw error.response.data.message;
+        }
+      } else return -1;
+    },
 });
-export const fetchAuctionsErrorAtom = atom({
-  key: "fetchAuctionsErrorState",
-  default: null,
-});
-
 export const placeBidSelector = selectorFamily({
   key: "placeBidState",
   get:
@@ -26,7 +38,7 @@ export const placeBidSelector = selectorFamily({
     async ({ get }) => {
       const auction = get(biddingOnAuctionAtom);
       const token = get(authAtom);
-      if (amount!==null && auction && token) {
+      if (amount !== null && auction && token) {
         try {
           const id = auction.id;
           const updatedAuction = await axios.patch(

@@ -9,10 +9,7 @@ import { useHistory } from "react-router-dom";
 import LoadingButton from "../components/LoadingButton";
 import PictureUpload from "../components/PictureUpload";
 import { createAuctionSelector } from "../RecoilStore/AuctionStore";
-import {
-  useRecoilValueLoadable,
-  useSetRecoilState,
-} from "recoil";
+import { useRecoilValueLoadable, useSetRecoilState } from "recoil";
 import { auctionsAtom } from "../RecoilStore/AuctionStore";
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -34,8 +31,6 @@ const CreateAuctionPage = () => {
   const createdAuction = useRecoilValueLoadable(
     createAuctionSelector(dataToBeSend)
   );
-  console.log(createdAuction.contents);
-
   const createAuction = (e) => {
     e.preventDefault();
     setDataToBeSend({ title, pictureBase64: base64 });
@@ -43,7 +38,7 @@ const CreateAuctionPage = () => {
   useEffect(() => {
     if (createdAuction.state === "hasValue" && createdAuction.contents !== -1) {
       setAuctions((auctions) => [createdAuction.contents, ...auctions]);
-      history.push("/")
+      history.push("/");
     }
   }, [setAuctions, createdAuction.state, createdAuction.contents, history]);
 
