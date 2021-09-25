@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   makeStyles,
@@ -9,9 +9,17 @@ import {
   InputAdornment,
   Button,
 } from "@material-ui/core";
-import { biddingOnAuctionAtom } from "../RecoilStore/AuctionStore";
-import { amountBidAtom } from "../RecoilStore/AuctionStore";
-import { useRecoilState, useSetRecoilState} from "recoil";
+import LoadingButton from "./LoadingButton";
+import {
+  biddingOnAuctionAtom,
+  placeBidSelector,
+  auctionsAtom,
+} from "../RecoilStore/AuctionStore";
+import {
+  useRecoilState,
+  useSetRecoilState,
+  useRecoilValueLoadable,
+} from "recoil";
 const useStyles = makeStyles((theme) => ({
   modal: {
     display: "flex",
@@ -30,12 +38,26 @@ const useStyles = makeStyles((theme) => ({
 const BidModal = () => {
   const classes = useStyles();
   const [auction, setAuction] = useRecoilState(biddingOnAuctionAtom);
+
   const [amt, setAmt] = useState(0);
-  const setAmount = useSetRecoilState(amountBidAtom);
-  
-  if (!auction) {
-    return null;
-  }
+  const [amount, setAmount] = useState(null);
+  const placeBid = useRecoilValueLoadable(placeBidSelector(amount));
+  const setAuctions = useSetRecoilState(auctionsAtom);
+  useEffect(() => {
+    if (placeBid.state === "hasValue" && placeBid.contents !== -1) {
+      setAuctions((auctions) => {
+        return auctions.map((singleAuction) =>
+          singleAuction.id === placeBid.contents.id
+            ? placeBid.contents
+            : singleAuction
+        );
+      });
+      setAuction(null);
+    }
+  }, [placeBid.state, placeBid.contents, setAuctions, setAuction]);
+  const placeBidHandler = () => {
+    setAmount(amt);
+  };
 
   return (
     <Modal
@@ -57,7 +79,6 @@ const BidModal = () => {
               <Input
                 id='standard-adornment-amount'
                 value={amt}
-                // value='1'
                 onChange={(e) => setAmt(e.target.value)}
                 type='number'
                 startAdornment={
@@ -68,9 +89,12 @@ const BidModal = () => {
             <br />
             <br />
             <div>
-              <Button style={{ float: "right" }} onClick={() => setAmount(amt)}>
-                Place Bid
-              </Button>
+              <LoadingButton
+                style={{ float: "right" }}
+                onClick={placeBidHandler}
+                title='Place Bid'
+                loading={placeBid.state === "loading"}
+              />
             </div>
           </form>
         </div>
