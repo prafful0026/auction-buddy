@@ -1,15 +1,11 @@
 import { selectorFamily, atom, selector } from "recoil";
 import { authAtom } from "./AuthStore";
-import { API_BASE_URL } from "../utils/constants";
-import Axios from "axios";
-const axios = Axios.create({
-  baseURL: API_BASE_URL,
-});
+import axios from "../utils/axiosUtil";
+
 export const biddingOnAuctionAtom = atom({
   key: "biddingOnAuctionState",
   default: null,
 });
-
 export const auctionsAtom = atom({
   key: "auctionsState",
   default: [],
@@ -18,28 +14,18 @@ export const amountBidAtom = atom({
   key: "auctionAtomState",
   default: null,
 });
-
-export const auctionsFetchSelector = selectorFamily({
-  key: "auctionsFetchState",
-  get:
-    (demo) =>
-    async ({ get }) => {
-      const token = get(authAtom);
-      if (token) {
-        try {
-          const auctions = await axios.get("/auction?status=OPEN", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          return auctions.data;
-        } catch (error) {
-          throw error.response.data.message;
-        }
-      }
-    },
+export const newAuction = atom({
+  key: "auctionAtomState",
+  default: null,
 });
-
+export const fetchAuctionsLoadingAtom=atom({
+  key:"fetchAuctionsLoadingState",
+  default:false
+})
+export const fetchAuctionsErrorAtom=atom({
+  key:"fetchAuctionsErrorState",
+  default:null
+})
 export const placeBidSelector = selector({
   key: "placeBidState",
   get: async ({ get }) => {
@@ -67,4 +53,31 @@ export const placeBidSelector = selector({
       return false;
     }
   },
+});
+
+export const createAuctionSelector = selectorFamily({
+  key: "placeBidState",
+  get:
+    (newAuction) =>
+    async ({ get }) => {
+      if (newAuction && newAuction.title && newAuction.pictureBase64) {
+        const { title, pictureBase64 } = newAuction;
+        try {
+          const token = get(authAtom);
+          const createAuctionResult = await axios.post(
+            "/auction",
+            { title, pictureBase64 },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          return createAuctionResult.data;
+        } catch (error) {
+          console.error(error);
+          throw error.response.data.message;
+        }
+      } else return -1;
+    },
 });

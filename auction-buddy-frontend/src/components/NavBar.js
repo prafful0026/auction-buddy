@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { makeStyles, Button } from '@material-ui/core';
-
+import { makeStyles, Button } from "@material-ui/core";
+import { Link } from "react-router-dom";
 const useStyles = makeStyles({
   navbar: {
     background:
@@ -28,14 +28,16 @@ const useStyles = makeStyles({
 });
 
 const NavBar = ({ authStore }) => {
-  const { loginWithRedirect, logout, isAuthenticated } = useAuth0();
+  const { logout, isAuthenticated } = useAuth0();
 
   const classes = useStyles();
 
   return (
     <div className={classes.navbar}>
       <div className={classes.header}>
-        <h1 style={{ fontSize: 14, color: "white" }}>AUCTION BUDDY</h1>
+        <Link to='/' style={{ textDecoration: "none" }}>
+          <h1 style={{ fontSize: 14, color: "white" }}>AUCTION BUDDY</h1>
+        </Link>
       </div>
       <div className={classes.loginLogoutContainer}>
         {isAuthenticated && (
