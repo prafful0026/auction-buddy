@@ -3,5 +3,5 @@
 https://master.d3cuaq1709yof1.amplifyapp.com/
 
 login as-
- email - demo@gm.com
- password - AuctionBuddy
+ email - demo1@gm.com
+ password - AuctionBuddy01@
