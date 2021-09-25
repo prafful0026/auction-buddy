@@ -86,7 +86,7 @@ const BidModal = () => {
                 onChange={(e) => setAmt(e.target.value)}
                 type='number'
                 startAdornment={
-                  <InputAdornment position='start'>$</InputAdornment>
+                  <InputAdornment position='start'>₹</InputAdornment>
                 }
               />
             </FormControl>

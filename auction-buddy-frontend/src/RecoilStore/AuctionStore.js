@@ -26,7 +26,7 @@ export const placeBidSelector = selectorFamily({
     async ({ get }) => {
       const auction = get(biddingOnAuctionAtom);
       const token = get(authAtom);
-      if (amount && auction && token) {
+      if (amount!==null && auction && token) {
         try {
           const id = auction.id;
           const updatedAuction = await axios.patch(
