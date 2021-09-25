@@ -7,7 +7,7 @@ const useStyles = makeStyles({
     background:
       "linear-gradient(90deg, rgba(190,52,32,1) 0%, rgba(231,75,77,1) 48%, rgba(231,148,74,1) 100%)",
     padding: 14,
-    marginBottom: 24,
+    // marginBottom: 24,
     display: "flex",
     width: "100%",
     boxSizing: "border-box",

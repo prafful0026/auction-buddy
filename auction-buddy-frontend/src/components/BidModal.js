@@ -7,7 +7,6 @@ import {
   InputLabel,
   Input,
   InputAdornment,
-  Button,
 } from "@material-ui/core";
 import LoadingButton from "./LoadingButton";
 import {
@@ -20,6 +19,7 @@ import {
   useSetRecoilState,
   useRecoilValueLoadable,
 } from "recoil";
+import Error from "./Error";
 const useStyles = makeStyles((theme) => ({
   modal: {
     display: "flex",
@@ -70,6 +70,10 @@ const BidModal = () => {
     >
       <Fade in={!!auction}>
         <div className={classes.paper}>
+          <Error
+            isError={placeBid.state === "hasError"}
+            errorMessage={placeBid.contents}
+          />
           <h2>Bid on "{auction.title}"</h2>
           <form noValidate autoComplete='off'>
             <FormControl fullWidth className={classes.margin}>

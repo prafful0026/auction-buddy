@@ -1,14 +1,11 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
-const Loading = () => {
-  return <h1>Loading</h1>;
-};
-
+import LoadingSpinner from "./LoadingSpinner";
 const ProtectedRoute = ({ component, ...args }) => (
   <Route
     component={withAuthenticationRequired(component, {
-      onRedirecting: () => <Loading />,
+      onRedirecting: () => <LoadingSpinner display={true} />,
     })}
     {...args}
   />

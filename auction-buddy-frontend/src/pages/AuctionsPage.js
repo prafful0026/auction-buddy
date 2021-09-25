@@ -12,7 +12,8 @@ import AddIcon from "@material-ui/icons/Add";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useHistory } from "react-router";
 import { useAuth0 } from "@auth0/auth0-react";
-
+import LoadingSpinner from "../components/LoadingSpinner";
+import Error from "../components/Error";
 const containerWidth = 1000;
 const cardPadding = 14;
 const cardWidth = containerWidth / 2 - cardPadding * 2;
@@ -48,7 +49,6 @@ const AuctionsPage = () => {
   const auctions = useRecoilValue(auctionsAtom);
   const loading = useRecoilValue(fetchAuctionsLoadingAtom);
   const error = useRecoilValue(fetchAuctionsErrorAtom);
-  console.log("auctions", auctions);
   const { user } = useAuth0();
   const email = user.name;
   const classes = useStyles();
@@ -97,22 +97,24 @@ const AuctionsPage = () => {
   };
 
   return (
-    <div className={classes.auctionsContainer}>
-      {biddingOnAuction && <BidModal />}
-      {loading && <>loadiing.....</>}
-      {error && <>{error}</>}
-      <RenderAuctions />
-      <div className={classes.fabContainer}>
-        <Fab
-          color='primary'
-          aria-label='add'
-          className={classes.createAuctionButton}
-          onClick={() => history.push("/create")}
-        >
-          <AddIcon />
-        </Fab>
+    <>
+      <LoadingSpinner display={loading} />
+      <Error isError={error} errorMessage={error} />
+      <div className={classes.auctionsContainer}>
+        {biddingOnAuction && <BidModal />}
+        <RenderAuctions />
+        <div className={classes.fabContainer}>
+          <Fab
+            color='primary'
+            aria-label='add'
+            className={classes.createAuctionButton}
+            onClick={() => history.push("/create")}
+          >
+            <AddIcon />
+          </Fab>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

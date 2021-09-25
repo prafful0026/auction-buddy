@@ -25,7 +25,7 @@ function ErrorFallback({ error, resetErrorBoundary }) {
 }
 
 const App = () => {
-  const { isAuthenticated, getIdTokenClaims } = useAuth0();
+  const { isAuthenticated, getIdTokenClaims,isLoading } = useAuth0();
   const [auth, setAuth] = useRecoilState(authAtom);
   const setAuctions = useSetRecoilState(auctionsAtom);
   const setError = useSetRecoilState(fetchAuctionsErrorAtom);
@@ -48,7 +48,7 @@ const App = () => {
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <div className='App'>
         <header>
-          <NavBar />
+          {isAuthenticated && !isLoading && <NavBar />}
         </header>
         <Switch>
           <PrivateRoute path='/' component={AuctionsPage} exact />
