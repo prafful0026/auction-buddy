@@ -18,6 +18,7 @@ async function getAuctions(event, context) {
     ExpressionAttributeNames: {
       "#status": "status",
     },
+    ScanIndexForward: false,
   };
   try {
     const result = await dynamoDB.query(params).promise();
