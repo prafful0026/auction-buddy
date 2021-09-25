@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Auction from "../components/Auction";
 import BidModal from "../components/BidModal";
 import {
   auctionsAtom,
+  fetchAuctionsErrorAtom,
+  fetchAuctionsLoadingAtom,
   biddingOnAuctionAtom,
-  auctionsFetchSelector,
 } from "../RecoilStore/AuctionStore";
 import { Fab, makeStyles } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import {
-  useRecoilState,
-  useRecoilValueLoadable,
-} from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { useHistory } from "react-router";
 import { useAuth0 } from "@auth0/auth0-react";
-import HandleLoadableObject from "../components/HandleLoadableObject";
+
 const containerWidth = 1000;
 const cardPadding = 14;
 const cardWidth = containerWidth / 2 - cardPadding * 2;
@@ -47,28 +45,18 @@ const useStyles = makeStyles({
 });
 
 const AuctionsPage = () => {
-  const [demo, setDemp] = useState(0);
-  const fetchAuctions = useRecoilValueLoadable(auctionsFetchSelector(demo));
-  const [auctions, setAuctions] = useRecoilState(auctionsAtom);
+  const auctions = useRecoilValue(auctionsAtom);
+  const loading = useRecoilValue(fetchAuctionsLoadingAtom);
+  const error = useRecoilValue(fetchAuctionsErrorAtom);
+  console.log("auctions", auctions);
   const { user } = useAuth0();
   const email = user.name;
   const classes = useStyles();
   const history = useHistory();
-  const [biddingOnAuction,setBiddingOnAuction] = useRecoilState(biddingOnAuctionAtom);
-  // useEffect(() => {
-  //   (async () => {
-  //     await auctionStore.fetchAuctions();
-  //     setInterval(() => {
-  //       if (routerHistory.location.pathname === '/auctions' || routerHistory.location.pathname === '/') {
-  //         auctionStore.fetchAuctions();
-  //       }
-  //     }, process.env.REACT_APP_REFRESH_RATE * 1000);
-  //   })();
-  // }, [auctionStore, routerHistory]);
+  const [biddingOnAuction, setBiddingOnAuction] =
+    useRecoilState(biddingOnAuctionAtom);
 
-  // useEffect(()=>{
-
-  // })
+  useEffect(() => {});
   const geeBidState = (auction) => {
     let bidState = "CAN_BID";
 
@@ -111,14 +99,9 @@ const AuctionsPage = () => {
   return (
     <div className={classes.auctionsContainer}>
       {biddingOnAuction && <BidModal />}
-      <HandleLoadableObject
-        loadableObject={fetchAuctions}
-        updatingFunction={setAuctions}
-      />
-      {fetchAuctions.state === "hasValue" && <RenderAuctions />}
-      <div>
-        <button onClick={() => setDemp((state) => state + 1)}>dwd</button>
-      </div>
+      {loading && <>loadiing.....</>}
+      {error && <>{error}</>}
+      <RenderAuctions />
       <div className={classes.fabContainer}>
         <Fab
           color='primary'

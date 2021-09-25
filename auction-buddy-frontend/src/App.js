@@ -2,12 +2,18 @@ import React, { useEffect } from "react";
 import { Switch } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { authAtom } from "./RecoilStore/AuthStore";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  auctionsAtom,
+  fetchAuctionsErrorAtom,
+  fetchAuctionsLoadingAtom,
+} from "./RecoilStore/AuctionStore";
 import PrivateRoute from "./components/PrivateRoute";
 import NavBar from "./components/NavBar";
 import AuctionsPage from "./pages/AuctionsPage";
 import { ErrorBoundary } from "react-error-boundary";
-
+import CreateAuctionPage from "./pages/CreateAuctionPage";
+import { fetchAuctions } from "./utils/fetchAuctions";
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
     <div role='alert'>
@@ -20,7 +26,10 @@ function ErrorFallback({ error, resetErrorBoundary }) {
 
 const App = () => {
   const { isAuthenticated, getIdTokenClaims } = useAuth0();
-  const setAuth = useSetRecoilState(authAtom);
+  const [auth, setAuth] = useRecoilState(authAtom);
+  const setAuctions = useSetRecoilState(auctionsAtom);
+  const setError = useSetRecoilState(fetchAuctionsErrorAtom);
+  const setLoading = useSetRecoilState(fetchAuctionsLoadingAtom);
 
   useEffect(() => {
     const getToken = async () => {
@@ -28,9 +37,13 @@ const App = () => {
       const token = tokenClaims.__raw;
       setAuth(token);
     };
-
     isAuthenticated && getToken();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, getIdTokenClaims, setAuth]);
+  useEffect(() => {
+    (async () => {
+      await fetchAuctions(setError, setLoading, auth, setAuctions);
+    })();
+  }, [auth, setError, setLoading, setAuctions]);
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <div className='App'>
@@ -39,6 +52,7 @@ const App = () => {
         </header>
         <Switch>
           <PrivateRoute path='/' component={AuctionsPage} exact />
+          <PrivateRoute path='/create' component={CreateAuctionPage} exact />
         </Switch>
       </div>
     </ErrorBoundary>
